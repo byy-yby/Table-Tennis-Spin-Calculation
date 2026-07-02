@@ -12,6 +12,8 @@ class DotNet(nn.Module):
             layers.append(nn.Conv2d(channels[i], channels[i+1], 3, padding=1))
             layers.append(nn.BatchNorm2d(channels[i+1]))
             layers.append(nn.LeakyReLU(0.1, inplace=True))
+            if i % 3 == 0:
+                layers.append(nn.Dropout2d(0.1))
         self.body = nn.Sequential(*layers)
         self.out = nn.Sequential(
             nn.Conv2d(32, 16, 3, padding=1),
