@@ -1,0 +1,16 @@
+# Ignore everything
+*
+
+# Track only: spinCal, getData, dotnet, README
+!spinCal/
+!spinCal/**
+!getData/
+!getData/**
+!dotnet/
+!dotnet/**
+!README.md
+!.gitignore
+
+# But NOT pycache
+__pycache__/
+*.pyc
