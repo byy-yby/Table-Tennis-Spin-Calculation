@@ -10,6 +10,7 @@
 !dotnet/**
 !README.md
 !spinCal.png
+!spinCal.py
 !.gitignore
 
 # But NOT pycache
