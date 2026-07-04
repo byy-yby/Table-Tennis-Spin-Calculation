@@ -1,18 +1,38 @@
-# Ignore everything
+# 默认忽略一切 (白名单策略: 只跟踪代码)
 *
 
-# Track only: spinCal, getData, dotnet, README
+# ── 白名单: 代码目录 ──
 !spinCal/
 !spinCal/**
 !getData/
 !getData/**
 !dotnet/
 !dotnet/**
-!README.md
-!spinCal.png
-!spinCal.py
-!.gitignore
+!ballnet/
+!ballnet/**
 
-# But NOT pycache
+# ── 大文件: 数据集 / 模型 / 视频 (即使在被跟踪目录内也忽略, 不上传) ──
+*.pt
+*.pth
+*.onnx
+*.avi
+*.mp4
+*.mov
+*.mkv
+dataset/
+dataset_ball/
+highspeed/
+spindoe/
+
+# ── Python 缓存 / 虚拟环境 ──
 __pycache__/
 *.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# ── 根目录跟踪文件 ──
+!README.md
+!spinCal.png
+!.gitignore

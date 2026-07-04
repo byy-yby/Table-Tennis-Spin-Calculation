@@ -105,7 +105,11 @@ def process_dir(img_dir):
 
 def main():
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("dataset")
-    if len(sys.argv) > 2:
+
+    # 判断 root 本身是否是 data_* 目录
+    if root.is_dir() and root.name.startswith("data_") and (root / "labels.csv").exists():
+        dirs = [root]
+    elif len(sys.argv) > 2:
         dirs = [d for d in root.iterdir() if d.is_dir() and sys.argv[2] in d.name]
     else:
         dirs = sorted([d for d in root.iterdir() if d.is_dir() and d.name.startswith("data_")])

@@ -1,5 +1,17 @@
 """AVI 视频 → 裁剪帧"""
-import cv2, numpy as np
+import sys, cv2, numpy as np
+
+
+def _progress(fi, total, width=30):
+    """单行刷新进度条 (ASCII, 兼容 Windows 终端)。"""
+    pct = (fi + 1) / total
+    filled = int(width * pct)
+    bar = "#" * filled + "-" * (width - filled)
+    sys.stdout.write(f"\r    [{bar}] {100 * pct:5.1f}% ({fi + 1}/{total})")
+    sys.stdout.flush()
+    if fi + 1 >= total:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
 
 
 def build_background(cap, total):
@@ -39,7 +51,7 @@ def extract_frames_from_video(video_path, out_size=60, motion_thresh=2000):
             bcx, bcy = best[1]
             br = max(best[2][cv2.CC_STAT_WIDTH], best[2][cv2.CC_STAT_HEIGHT]) / 2.0
             bg_motion[fi] = (bcx, bcy, br)
-        if fi % 400 == 0: print(f"    {fi}/{total_frames}...")
+        _progress(fi, total_frames)
 
     if not bg_motion: return None, fps, {}
 

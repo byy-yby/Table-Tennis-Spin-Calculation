@@ -1,7 +1,6 @@
-"""DotDataset — 热图回归数据集"""
-import torch
+"""DotDataset — 热图回归数据集 (训练时在线随机增强)"""
+import torch, cv2, numpy as np, csv, random
 from torch.utils.data import Dataset
-import cv2, numpy as np, csv
 from pathlib import Path
 
 IMG_SIZE = 60
@@ -11,20 +10,32 @@ GAUSS_SIGMA = 1.5
 class DotDataset(Dataset):
     def __init__(self, root_dir):
         self.samples = []
-        for aug_dir in Path(root_dir).glob("data_*/aug"):
-            label_file = aug_dir / "labels.csv"
-            if not label_file.exists(): continue
+        for data_dir in Path(root_dir).glob("data_*"):
+            # 优先读增强数据 (aug/), 没有则读原始目录
+            aug_dir = data_dir / "aug"
+            if aug_dir.exists() and (aug_dir / "labels.csv").exists():
+                img_base = aug_dir
+                label_file = aug_dir / "labels.csv"
+                cols = (0, 4, 5)  # aug_filename, px, py
+            elif (data_dir / "labels.csv").exists():
+                img_base = data_dir
+                label_file = data_dir / "labels.csv"
+                cols = (0, 2, 3)  # filename, px, py
+            else:
+                continue
+
             img_labels = {}
             with open(label_file, "r") as f:
                 reader = csv.reader(f); next(reader, None)
                 for row in reader:
-                    if len(row) >= 6:
-                        fname, _, _, _, px, py = (row[0], row[1], row[2], row[3],
-                                                   float(row[4]), float(row[5]))
+                    if len(row) >= max(cols) + 1:
+                        fname = row[cols[0]]
+                        try: px, py = float(row[cols[1]]), float(row[cols[2]])
+                        except ValueError: continue
                         if fname not in img_labels: img_labels[fname] = []
                         img_labels[fname].append((px, py))
             for fname, dots in img_labels.items():
-                img_path = aug_dir / fname
+                img_path = img_base / fname
                 if img_path.exists():
                     self.samples.append((str(img_path), dots))
         print(f"DotDataset: {len(self.samples)} samples")
