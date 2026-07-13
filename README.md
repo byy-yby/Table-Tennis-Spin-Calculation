@@ -63,6 +63,7 @@ Visible dots have negative Z (near hemisphere). The 3D visualization shows the r
 Table-Tennis-Spin-Calculation/
 ├── spinCal/              # Core spin measurement package
 │   ├── main.py           # CLI entry point
+│   ├── calibration.py    # Camera calibration
 │   ├── config.py         # Camera parameters & thresholds
 │   ├── geometry.py       # 3D geometry (ray-sphere, Kabsch)
 │   ├── ballfit.py        # Subpixel ball-edge detection (radial gradient + RANSAC circle)
@@ -99,7 +100,17 @@ python -m spinCal.main <video.avi> --no-viz
 
 After loading, drag the ball center / adjust the radius slider per frame (ENTER=next, B=back, F=done) to override the auto-detected edge for any frame.
 
-### Custom Training Workflow
+## Camera Calibration (Prerequisite)
+
+Before measuring 3D projection, obtain the camera intrinsics (Camera Matrix and Distortion Coefficients).
+
+```bash
+# Put  checkerboard images in the same repository as calibration.py
+python calibration.py
+
+---
+
+## Custom Training Workflows
 
 ```bash
 python getData/extract.py <video directory>     # 1. Extract ball ROIs
